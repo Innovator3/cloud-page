@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon EC2 Purchase Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #ffffff;
+            color: #333;
+            padding: 60px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 60px;
+            text-align: left;
+        }
+        
+        .pricing-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .pricing-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+            transition: all 0.3s ease;
+            border: none;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 19px;
+            z-index: -1;
+            opacity: 0;
+            filter: blur(8px);
+            transition: opacity 0.3s ease;
+        }
+        
+        .pricing-card.featured::before {
+            background: linear-gradient(135deg, #ff66c4, #ff9a9e, #fad0c4);
+        }
+        
+        .pricing-card.savings::before {
+            background: linear-gradient(135deg, #4ade80, #22d3ee, #a78bfa);
+        }
+        
+        .pricing-card.spot::before {
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4);
+        }
+        
+        .pricing-card:hover {
+            background: white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pricing-card:hover::before {
+            opacity: 0.8;
+        }
+        
+        .pricing-card.featured:hover {
+            box-shadow: 0 0 0 1px rgba(255, 102, 196, 0.3);
+        }
+        
+        .pricing-card.savings:hover {
+            box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.3);
+        }
+        
+        .pricing-card.spot:hover {
+            box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3);
+        }
+        
+        .card-title {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        
+        .card-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            flex-grow: 1;
+        }
+        
+        .learn-more-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .learn-more-link:hover {
+            color: #007bff;
+        }
+        
+        .arrow {
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .learn-more-link:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* Detailed Pricing Breakdown Styles */
+        .pricing-details {
+            display: none;
+            margin-top: 40px;
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .pricing-details.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .details-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .details-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .breakdown-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .breakdown-table td {
+            color: #4b5563;
+        }
+
+        .total-row {
+            background: #f0f9ff;
+            font-weight: 600;
+        }
+
+        .total-row td {
+            color: #1e40af;
+            border-bottom: 3px solid #3b82f6;
+        }
+
+        .savings-plans-table {
+            margin-bottom: 24px;
+        }
+
+        .plan-benefits,
+        .plan-limitations {
+            margin-top: 20px;
+        }
+
+        .benefits-list,
+        .limitations-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-list li,
+        .limitations-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .benefits-list li::before {
+            content: "✅";
+            flex-shrink: 0;
+        }
+
+        .limitations-list li::before {
+            content: "🚫";
+            flex-shrink: 0;
+        }
+
+        .spot-risk-notice {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .spot-risk-notice h4 {
+            color: #92400e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-details {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .close-details:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        /* Pricing Table Styles */
+        .pricing-table-section {
+            margin-top: 80px;
+            margin-bottom: 60px;
+        }
+        
+        .section-subtitle {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 32px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .pricing-table thead {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        }
+        
+        .pricing-table th {
+            padding: 20px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .pricing-table td {
+            padding: 20px 16px;
+            color: #4b5563;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .table-row-highlight {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .table-row-highlight:hover {
+            background: linear-gradient(135deg, #fef3f2, #fdf2f8);
+            transform: translateY(-1px);
+        }
+        
+        .instance-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        
+        .savings-rate {
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .savings-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .on-demand-rate {
+            color: #6b7280;
+            text-decoration: line-through;
+        }
+        
+        /* Recommendations Styles */
+        .recommendations-section {
+            background: linear-gradient(135deg, #fafbfc, #f8fafc);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .recommendations-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .check-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3));
+        }
+        
+        .recommendations-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .recommendation-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .recommendation-card.production::before {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+        
+        .recommendation-card.dev-test::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        
+        .recommendation-card.mvp::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        }
+        
+        .rec-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .rec-icon {
+            font-size: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .prod-icon {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        }
+        
+        .dev-icon {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+        
+        .mvp-icon {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+        
+        .rec-details {
+            flex-grow: 1;
+        }
+        
+        .rec-use-case {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+        }
+        
+        .rec-suggestion {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        .rec-description {
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .instance-specs {
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .instance-specs h4 {
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .instance-specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .instance-specs-table th,
+        .instance-specs-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .instance-specs-table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.85rem;
+        }
+
+        .instance-specs-table td {
+            color: #4b5563;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .pricing-options {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .pricing-card {
+                padding: 24px;
+            }
+
+            .breakdown-table {
+                font-size: 0.85rem;
+            }
+
+            .breakdown-table th,
+            .breakdown-table td {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="section-title">Purchase options</h1>
+        
+        <div class="pricing-options">
+            <div class="pricing-card featured">
+                <div>
+                    <h2 class="card-title">On-Demand Instances</h2>
+                    <p class="card-description">
+                        On-Demand Instances offer pay-as-you-go compute capacity by the hour or second. No upfront payment or long-term commitment are required.
+                    </p>
+                </div>
+                <a href="javascript:void(0)" class="learn-more-link" onclick="showDetails('on-demand'); return false;">
+                    Learn more <span class="arrow">→</span>
+                </a>
+            </div>
+            
+            <div class="pricing-card savings">
+                <div>
+                    <h2 class="card-title">Savings Plan</h2>
+                    <p class="card-description">
+                        Savings Plans can help you reduce your bill by up to 72% compared to On-Demand prices in exchange for a usage commitment.
+                    </p>
+                </div>
+                <a href="javascript:void(0)" class="learn-more-link" onclick="showDetails('savings-plan'); return false;">
+                    Learn more <span class="arrow">→</span>
+                </a>
+            </div>
+            
+            <div class="pricing-card spot">
+                <div>
+                    <h2 class="card-title">Spot Instances</h2>
+                    <p class="card-description">
+                        With Amazon EC2 Spot Instances, you can use spare Amazon EC2 capacity in the AWS Cloud. This capacity is available at a discount of up to 90% compared to On-Demand prices.
+                    </p>
+                </div>
+                <a href="javascript:void(0)" class="learn-more-link" onclick="showDetails('spot-instances'); return false;">
+                    Learn more <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Detailed Pricing Breakdowns -->
+        <div id="on-demand-details" class="pricing-details">
+            <button class="close-details" onclick="hideDetails('on-demand-details')">&times;</button>
+            <div class="details-header">
+                <span>📦</span>
+                <h3 class="details-title">1. On-Demand Grand Total (All-Inclusive)</h3>
+            </div>
+            
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Monthly USD</th>
+                        <th>Monthly INR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EC2 t3.xlarge</td>
+                        <td>$120.50</td>
+                        <td>₹10,000</td>
+                    </tr>
+                    <tr>
+                        <td>EBS 150 GB (gp3)</td>
+                        <td>$12.00</td>
+                        <td>₹1,000</td>
+                    </tr>
+                    <tr>
+                        <td>IAM (5 users)</td>
+                        <td>Free</td>
+                        <td>Free</td>
+                    </tr>
+                    <tr>
+                        <td>CloudWatch + SNS</td>
+                        <td>~$9.15</td>
+                        <td>₹765</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Grand Total</strong></td>
+                        <td><strong>~$141.65</strong></td>
+                        <td><strong>~₹11,765</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="instance-specs">
+                <h4>🚫If CPU is overloaded during testing phase, we can move to:</h4>
+                <table class="instance-specs-table">
+                    <thead>
+                        <tr>
+                            <th>Instance name</th>
+                            <th>On-Demand hourly rate</th>
+                            <th>vCPU</th>
+                            <th>Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>c4.2xlarge</td>
+                            <td>$0.398</td>
+                            <td>8</td>
+                            <td>16 GiB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>🔹 On-Demand Pricing (730 hrs/month)</h4>
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Monthly USD</th>
+                        <th>Monthly INR (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EC2 c4.2xlarge</td>
+                        <td>$0.398 × 730 = $290.54</td>
+                        <td>₹24,500</td>
+                    </tr>
+                    <tr>
+                        <td>EBS 150 GB (gp3)</td>
+                        <td>$12.00</td>
+                        <td>₹1,000</td>
+                    </tr>
+                    <tr>
+                        <td>IAM (5 users)</td>
+                        <td>Free</td>
+                        <td>Free</td>
+                    </tr>
+                    <tr>
+                        <td>CloudWatch + SNS</td>
+                        <td>~$9.15</td>
+                        <td>₹765</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Grand Total</strong></td>
+                        <td><strong>~$311.69</strong></td>
+                        <td><strong>~₹26,265</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="savings-plan-details" class="pricing-details">
+            <button class="close-details" onclick="hideDetails('savings-plan-details')">&times;</button>
+            <div class="details-header">
+                <span>🔐</span>
+                <h3 class="details-title">2. Compute Savings Plan (1-Year, All Upfront)</h3>
+            </div>
+            
+            <table class="breakdown-table savings-plans-table">
+                <thead>
+                    <tr>
+                        <th>Plan Type</th>
+                        <th>Discount</th>
+                        <th>Monthly EC2 Cost</th>
+                        <th>Grand Total (USD)</th>
+                        <th>INR (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1-Year, All Upfront</td>
+                        <td><span class="savings-badge">~32% OFF</span></td>
+                        <td>~$82.00</td>
+                        <td>~$103.15</td>
+                        <td>~₹8,560</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>3-Year, All Upfront</td>
+                        <td><span class="savings-badge">~50–55% OFF</span></td>
+                        <td>~$60.00</td>
+                        <td>~$81.15</td>
+                        <td>~₹6,740</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="instance-specs">
+                <h4>🚫 If CPU is overloaded during testing phase, we can move to:</h4>
+                <table class="instance-specs-table">
+                    <thead>
+                        <tr>
+                            <th>Instance name</th>
+                            <th>On-Demand hourly rate</th>
+                            <th>vCPU</th>
+                            <th>Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>c4.2xlarge</td>
+                            <td>$0.398</td>
+                            <td>8</td>
+                            <td>16 GiB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>🔐 Compute Savings Plan – 1-Year, All Upfront</h4>
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Plan Type</th>
+                        <th>Discount</th>
+                        <th>EC2 Cost</th>
+                        <th>Grand Total (USD)</th>
+                        <th>INR (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1-Year Plan</td>
+                        <td><span class="savings-badge">~27% OFF</span></td>
+                        <td>$0.29/hr × 730 = $211.70</td>
+                        <td>~$232.85</td>
+                        <td>~₹19,625</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>3-Year (Est. ~45%)</td>
+                        <td><span class="savings-badge">~45% OFF</span></td>
+                        <td>~$160.00</td>
+                        <td>~$181.15</td>
+                        <td>~₹15,300</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="plan-benefits">
+                <h4>Benefits:</h4>
+                <ul class="benefits-list">
+                    <li>Includes flexibility across EC2 families, sizes, OS, and AZs</li>
+                    <li>Automatic application to eligible usage</li>
+                    <li>Significant cost savings for predictable workloads</li>
+                    <li>✅ Good for production, guaranteed cost</li>
+                </ul>
+            </div>
+
+            <div class="plan-limitations">
+                <h4>Limitations:</h4>
+                <ul class="limitations-list">
+                    <li>Cannot stop paying after commitment</li>
+                    <li>Upfront payment required</li>
+                    <li>Best suited for stable, predictable usage</li>
+                    <li>🚫 Cannot stop billing once committed</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="spot-instances-details" class="pricing-details" >
+            <button class="close-details" onclick="hideDetails('spot-instances-details')">&times;</button>
+            <div class="details-header">
+                <span>⚠️</span>
+                <h3 class="details-title">3. Spot Instance (Best-Effort Pricing)</h3>
+            </div>
+
+            <div class="spot-risk-notice">
+                <h4>⚠️ Important Risk Notice</h4>
+                <p>Spot instances can be interrupted anytime when AWS needs the capacity back. Save your work frequently!</p>
+            </div>
+            
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Risk</th>
+                        <th>Spot Price</th>
+                        <th>Monthly EC2</th>
+                        <th>Grand Total (USD)</th>
+                        <th>INR (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="total-row">
+                        <td>Can be interrupted anytime</td>
+                        <td>~$0.05/hr</td>
+                        <td>~$37.00</td>
+                        <td>~$58.15</td>
+                        <td>~₹4,825</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="instance-specs">
+                <h4>🚫If CPU is overloaded during testing phase, we can move to:</h4>
+                <table class="instance-specs-table">
+                    <thead>
+                        <tr>
+                            <th>Instance name</th>
+                            <th>On-Demand hourly rate</th>
+                            <th>vCPU</th>
+                            <th>Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>c4.2xlarge</td>
+                            <td>$0.398</td>
+                            <td>8</td>
+                            <td>16 GiB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>⚠️ Spot Instance (Variable)</h4>
+            <p>Typical Spot Rate for c4.2xlarge in Ohio: ~$0.118/hour<br>
+            Varies by time and availability<br>
+            Risk: Instance can be terminated at any time</p>
+
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Monthly USD</th>
+                        <th>Monthly INR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EC2 Spot</td>
+                        <td>$0.118 × 730 = ~$86.14</td>
+                        <td>~₹7,260</td>
+                    </tr>
+                    <tr>
+                        <td>EBS 150 GB (gp3)</td>
+                        <td>$12.00</td>
+                        <td>₹1,000</td>
+                    </tr>
+                    <tr>
+                        <td>CloudWatch + SNS</td>
+                        <td>~$9.15</td>
+                        <td>₹765</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total</strong></td>
+                        <td><strong>~$107.29</strong></td>
+                        <td><strong>~₹9,025</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="plan-benefits">
+                <h4>Great for:</h4>
+                <ul class="benefits-list">
+                    <li>Non-critical, stateless workloads</li>
+                    <li>Testing and development environments</li>
+                    <li>Batch processing jobs</li>
+                    <li>Fault-tolerant applications</li>
+                    <li>✅ Ideal for: CI/CD, test environments</li>
+                </ul>
+            </div>
+
+            <div class="plan-limitations">
+                <h4>Not ideal for:</h4>
+                <ul class="limitations-list">
+                    <li>Production databases or persistent services</li>
+                    <li>Applications requiring guaranteed uptime</li>
+                    <li>Workloads that cannot handle interruptions</li>
+                    <li>🚫 Not suitable for stateful/critical workloads</li>
+                </ul>
+            </div>
+        </div>
+        
+        
+        <!-- Recommendations Section -->
+        <div class="recommendations-section" style="margin-top: 40px;">
+            <div class="recommendations-header">
+                <div class="check-icon">✅</div>
+                <h2 class="recommendations-title">Recommendations</h2>
+            </div>
+            
+            <div class="recommendations-grid">
+                <div class="recommendation-card production">
+                    <div class="rec-header">
+                        <div class="rec-icon prod-icon">🏭</div>
+                        <div class="rec-details">
+                            <h3 class="rec-use-case">Production</h3>
+                            <p class="rec-suggestion">1-Year Savings Plan</p>
+                        </div>
+                    </div>
+                    <div class="rec-description">
+                        Ideal for stable, predictable workloads with consistent usage patterns.
+                    </div>
+                </div>
+                
+                <div class="recommendation-card dev-test">
+                    <div class="rec-header">
+                        <div class="rec-icon dev-icon">🧪</div>
+                        <div class="rec-details">
+                            <h3 class="rec-use-case">Dev/Test servers</h3>
+                            <p class="rec-suggestion">Spot Instances</p>
+                        </div>
+                    </div>
+                    <div class="rec-description">
+                        Perfect for fault-tolerant applications that can handle interruptions.
+                    </div>
+                </div>
+                
+                <div class="recommendation-card mvp">
+                    <div class="rec-header">
+                        <div class="rec-icon mvp-icon">🚀</div>
+                        <div class="rec-details">
+                            <h3 class="rec-use-case">MVP Launch</h3>
+                            <p class="rec-suggestion">Start with On-Demand, switch to Savings after 1–2 months</p>
+                        </div>
+                    </div>
+                    <div class="rec-description">
+                        Maintain flexibility during early stages, then optimize costs as usage stabilizes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDetails(type) {
+            console.log('Showing details for:', type); // Debug log
+            
+            // Hide all details first
+            const allDetails = document.querySelectorAll('.pricing-details');
+            allDetails.forEach(detail => {
+                detail.classList.remove('active');
+            });
+
+            // Show the selected details
+            const detailsId = type + '-details';
+            console.log('Looking for element:', detailsId); // Debug log
+            
+            const details = document.getElementById(detailsId);
+            if (details) {
+                console.log('Found element, showing details'); // Debug log
+                details.classList.add('active');
+                // Smooth scroll to the details section
+                setTimeout(() => {
+                    details.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            } else {
+                console.error('Element not found:', detailsId); // Debug log
+            }
+        }
+
+        function hideDetails(detailsId) {
+            console.log('Hiding details for:', detailsId); // Debug log
+            const details = document.getElementById(detailsId);
+            if (details) {
+                details.classList.remove('active');
+            }
+        }
+
+        // Close details when clicking outside (but not on learn more links)
+        document.addEventListener('click', function(event) {
+            // Don't close if clicking on a learn-more-link or its children
+            if (event.target.closest('.learn-more-link')) {
+                return;
+            }
+            
+            const details = document.querySelectorAll('.pricing-details.active');
+            details.forEach(detail => {
+                if (!detail.contains(event.target)) {
+                    detail.classList.remove('active');
+                }
+            });
+        });
+
+        // Ensure DOM is loaded before adding event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, page ready'); // Debug log
+            
+            // Add click event listeners as backup
+            const learnMoreLinks = document.querySelectorAll('.learn-more-link');
+            learnMoreLinks.forEach((link, index) => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const types = ['on-demand', 'savings-plan', 'spot-instances'];
+                    if (types[index]) {
+                        showDetails(types[index]);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

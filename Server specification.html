@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Specifications - Staging Environment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideDown 1s ease-out, headerGlow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s linear infinite;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #00c9ff, #92fe9d, #00c9ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            font-weight: 700;
+            animation: gradientMove 4s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+            50% { box-shadow: 0 35px 70px rgba(0, 201, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00c9ff, #92fe9d, #ff9a9e);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            display: inline-block;
+            filter: drop-shadow(0 0 20px rgba(0, 201, 255, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .spec-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 8px;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .spec-value {
+            color: #00c9ff;
+            font-weight: 700;
+            font-size: 1rem;
+            text-shadow: 0 0 10px rgba(0, 201, 255, 0.3);
+        }
+
+        .architecture-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 50px;
+            margin-bottom: 50px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 1s ease-out 0.3s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .architecture-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #17acd1, #18351b, #450d0f, #00c9ff);
+            background-size: 300% 300%;
+            border-radius: 25px;
+            z-index: -1;
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+
+        .architecture-section h2 {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .cost-breakdown {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .cost-breakdown h2 {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cost-table th,
+        .cost-table td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cost-table th {
+            background: linear-gradient(135deg, #00c9ff, #92fe9d);
+            color: #0f0f23;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .cost-table td {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .cost-table tr:hover td {
+            background: rgba(0, 201, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        .total-cost {
+            background: linear-gradient(135deg, #79d0e5, #fad0c4, #00c9ff);
+            background-size: 200% 200%;
+            color: #0f0f23;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 40px;
+            animation: glow 3s ease-in-out infinite alternate, gradientShift 4s ease-in-out infinite;
+            box-shadow: 0 15px 40px rgba(255, 154, 158, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-cost::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 2s linear infinite;
+        }
+
+        .total-cost h3 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .total-cost p {
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .recommendation-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            border-left: 4px solid #00c9ff;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 201, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .recommendation-card:hover::before {
+            opacity: 1;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 201, 255, 0.2);
+            border-left-color: #92fe9d;
+        }
+
+        .recommendation-card h3 {
+            color: #00c9ff;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .recommendation-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .metric-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00c9ff, #92fe9d);
+            color: #0f0f23;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 8px;
+            box-shadow: 0 5px 20px rgba(0, 201, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: badgeFloat 2s ease-in-out infinite;
+        }
+
+        .metric-badge:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 201, 255, 0.4);
+        }
+
+        @keyframes badgeFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 15px 40px rgba(255, 154, 158, 0.4);
+            }
+            to {
+                box-shadow: 0 20px 50px rgba(255, 154, 158, 0.6);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(0, 201, 255, 0.3);
+            }
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 15px 40px rgba(0, 201, 255, 0.4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>🚀 Server Specifications</h1>
+            <p>Staging Environment Architecture & Cost Analysis</p>
+            <div style="margin-top: 20px;">
+                <span class="metric-badge">100-150 RPM</span>
+                <span class="metric-badge">1.6-2.5 req/sec</span>
+                <span class="metric-badge">AWS t3.xlarge</span>
+            </div>
+        </div>
+
+        <!-- Specifications Grid -->
+        <div class="grid">
+            <!-- Backend Specs -->
+            <div class="card">
+                <div class="card-icon">🧠</div>
+                <h3>API Backend (Node.js/Python)</h3>
+                <div class="spec-item">
+                    <span class="spec-label">CPU Usage</span>
+                    <span class="spec-value">2-4 vCPU</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">RAM</span>
+                    <span class="spec-value">2-4 GiB</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Load Handling</span>
+                    <span class="spec-value">2-4 req/sec</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Response Time</span>
+                    <span class="spec-value">~100ms</span>
+                </div>
+            </div>
+
+            <!-- Frontend Specs -->
+            <div class="card">
+                <div class="card-icon">🌐</div>
+                <h3>Frontend (Nginx + React)</h3>
+                <div class="spec-item">
+                    <span class="spec-label">CPU Usage</span>
+                    <span class="spec-value">0.5 vCPU</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">RAM</span>
+                    <span class="spec-value">0.5 GiB</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Type</span>
+                    <span class="spec-value">Static Assets</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caching</span>
+                    <span class="spec-value">Browser/CDN</span>
+                </div>
+            </div>
+
+            <!-- Cache Specs -->
+            <div class="card">
+                <div class="card-icon">🚀</div>
+                <h3>Redis Cache (Optional)</h3>
+                <div class="spec-item">
+                    <span class="spec-label">CPU Usage</span>
+                    <span class="spec-value">0.2-0.5 vCPU</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">RAM</span>
+                    <span class="spec-value">0.5 GiB</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Purpose</span>
+                    <span class="spec-value">Session Cache</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Performance</span>
+                    <span class="spec-value">In-Memory</span>
+                </div>
+            </div>
+
+            <!-- Testing Specs -->
+            <div class="card">
+                <div class="card-icon">📦</div>
+                <h3>Docker Testing Tools</h3>
+                <div class="spec-item">
+                    <span class="spec-label">CPU Burst</span>
+                    <span class="spec-value">2-4 vCPU</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">RAM</span>
+                    <span class="spec-value">2-3 GiB</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Virtual Users</span>
+                    <span class="spec-value">200-300 users</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Usage</span>
+                    <span class="spec-value">Temporary</span>
+                </div>
+            </div>
+
+            <!-- Monitoring Specs -->
+            <div class="card">
+                <div class="card-icon">📈</div>
+                <h3>Monitoring & Logging</h3>
+                <div class="spec-item">
+                    <span class="spec-label">CPU Usage</span>
+                    <span class="spec-value">0.1-0.2 vCPU</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">RAM</span>
+                    <span class="spec-value">0.5 GiB</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Tools</span>
+                    <span class="spec-value">CloudWatch</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Log Processing</span>
+                    <span class="spec-value">Async Batches</span>
+                </div>
+            </div>
+
+            <!-- AWS Instance -->
+            <div class="card">
+                <div class="card-icon">☁️</div>
+                <h3>AWS EC2 Instance</h3>
+                <div class="spec-item">
+                    <span class="spec-label">Instance Type</span>
+                    <span class="spec-value">t3.xlarge</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Total vCPU</span>
+                    <span class="spec-value">4 cores</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Total RAM</span>
+                    <span class="spec-value">16 GiB</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Storage</span>
+                    <span class="spec-value">150 GB EBS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resource Allocation Summary -->
+        <div class="architecture-section" style="background: rgba(20, 20, 40, 0.8);">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #ffffff;">Resource Allocation Summary</h2>
+            <table class="cost-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Steady State vCPU</th>
+                        <th>RAM</th>
+                        <th>Testing Phase vCPU</th>
+                        <th>Testing Phase RAM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>API Backend</strong></td>
+                        <td>2 vCPU</td>
+                        <td>2-4 GiB</td>
+                        <td>2 vCPU</td>
+                        <td>2-4 GiB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nginx + React</strong></td>
+                        <td>0.5 vCPU</td>
+                        <td>0.5 GiB</td>
+                        <td>0.5 vCPU</td>
+                        <td>0.5 GiB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Redis Cache</strong></td>
+                        <td>0.5 vCPU</td>
+                        <td>0.5 GiB</td>
+                        <td>0.5 vCPU</td>
+                        <td>0.5 GiB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Monitoring</strong></td>
+                        <td>0.2 vCPU</td>
+                        <td>0.5 GiB</td>
+                        <td>0.2 vCPU</td>
+                        <td>0.5 GiB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Docker Testing</strong></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>2-4 vCPU</td>
+                        <td>2-3 GiB</td>
+                    </tr>
+                    <tr style="background: rgba(0, 50, 80, 0.5); font-weight: bold; color: #ffffff;">
+                        <td><strong>TOTAL</strong></td>
+                        <td><strong>3-4 vCPU</strong></td>
+                        <td><strong>4-6 GiB</strong></td>
+                        <td><strong>6-8 vCPU</strong></td>
+                        <td><strong>8-10 GiB</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- AWS Pricing Context -->
+        <div class="cost-breakdown">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #ffffff;">⚡ AWS EC2 Pricing Context (June 2025)</h2>
+            <table class="cost-table">
+                <thead>
+                    <tr>
+                        <th>Budget/month</th>
+                        <th>Example Instance</th>
+                        <th>Specs</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$18–30</td>
+                        <td>t3.small, t4g.medium</td>
+                        <td>2 vCPU, 2–4 GB RAM</td>
+                        <td>Blogs, static sites, dev/test environments</td>
+                    </tr>
+                    <tr>
+                        <td>$30–60</td>
+                        <td>t3.medium, m7g.large</td>
+                        <td>2 vCPU, 4–8 GB RAM</td>
+                        <td>Web backends, small apps, staging</td>
+                    </tr>
+                    <tr>
+                        <td>$60–100</td>
+                        <td>t3.large, c6i.large</td>
+                        <td>2–4 vCPU, 8–16 GB RAM</td>
+                        <td>Small production workloads, API services</td>
+                    </tr>
+                    <tr>
+                        <td>$100–150</td>
+                        <td>t3.xlarge, r6g.xlarge</td>
+                        <td>4 vCPU, 16–32 GB RAM</td>
+                        <td>Memory-heavy apps, containers, low-load DBs</td>
+                    </tr>
+                    <tr style="background: rgba(255, 0, 0, 0.1);">
+                        <td>❌ Too expensive for on-demand</td>
+                        <td>c6i.2xlarge</td>
+                        <td>8 vCPU, 16 GB RAM</td>
+                        <td>$249/month, exceeds $150 — compute-heavy apps (only within budget with Savings Plan)</td>
+                    </tr>
+                    <tr style="background: rgba(255, 0, 0, 0.1);">
+                        <td>❌ Too expensive for on-demand</td>
+                        <td>r6g.2xlarge</td>
+                        <td>8 vCPU, 32 GB RAM</td>
+                        <td>$294/month, exceeds $150 — ML inference, in-memory caching</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cost Breakdown -->
+        <div class="cost-breakdown">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">💰 Monthly Cost Breakdown</h2>
+            <table class="cost-table">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Specifications</th>
+                        <th>Monthly Cost (USD)</th>
+                        <th>Monthly Cost (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>EC2 t3.xlarge</strong></td>
+                        <td>4 vCPU, 16 GiB RAM</td>
+                        <td>$120.50</td>
+                        <td>₹10,000</td>
+                    </tr>
+                    <tr>
+                        <td><strong>EBS Storage</strong></td>
+                        <td>150 GB (gp3)</td>
+                        <td>$12.00</td>
+                        <td>₹1,000</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CloudWatch Monitoring</strong></td>
+                        <td>Custom metrics, logs, alarms</td>
+                        <td>$9.15</td>
+                        <td>₹765</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-cost">
+                <h3>💎 Total Monthly Investment</h3>
+                <div style="font-size: 1.5rem; margin: 10px 0;">
+                    <strong>$141.65 USD</strong> | <strong>₹11,765 INR</strong>
+                </div>
+                <p>Complete staging environment with monitoring & testing capabilities</p>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendations">
+            <div class="recommendation-card">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🎯 Performance Optimization</h3>
+                <p>The t3.xlarge instance provides excellent burst capability for handling traffic spikes while maintaining cost efficiency during normal operations.</p>
+            </div>
+            
+            <div class="recommendation-card">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🔧 Scalability</h3>
+                <p>Architecture supports horizontal scaling. Can easily upgrade to c6i.2xlarge (8 vCPU) for heavy testing workloads when needed.</p>
+            </div>
+            
+            <div class="recommendation-card">
+                <h3 style="color: #667eea; margin-bottom: 15px;">💡 Cost Efficiency</h3>
+                <p>Using spot instances for Docker testing tools can reduce costs by up to 70% during non-critical testing phases.</p>
+            </div>
+            
+            <div class="recommendation-card">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🛡️ Monitoring</h3>
+                <p>CloudWatch integration provides comprehensive monitoring with custom dashboards, alerts, and log aggregation for proactive management.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

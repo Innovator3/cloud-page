@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Provider Comparison 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .nav a:hover::before {
+            left: 0;
+        }
+
+        .nav a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: slideInLeft 1s ease-out 0.2s both;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: slideInRight 1s ease-out 0.4s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            padding: 15px 40px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: bounceIn 1s ease-out 0.6s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: white;
+            border-radius: 25px 25px 0 0;
+            margin-top: 40px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            animation: slideUpContent 1s ease-out 0.8s both;
+        }
+
+        .content-section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Comparison Table */
+        .table-container {
+            overflow-x: auto;
+            margin: 40px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .comparison-table tr:hover td {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .provider-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .cost-highlight {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .cost-high {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .cost-free {
+            color: #f39c12;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f39c12, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Recommendation Cards */
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .pros, .cons {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .pros h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .cons h4 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pros li, .cons li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .pros li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .cons li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .summary-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-title {
+            font-size: 42px;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .summary-text {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUpContent {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .nav {
+                display: none;
+            }
+            
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">☁️ CloudCompare</div>
+                <nav class="nav">
+                    <a href="#comparison">Comparison</a>
+                    <a href="#recommendations">Recommendations</a>
+                    <a href="#summary">Summary</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Cloud Provider Comparison 2025</h1>
+            <p>Make informed decisions with our comprehensive analysis of leading cloud providers</p>
+            <a href="#comparison" class="cta-button">Explore Comparison</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Comparison Section -->
+        <section id="comparison" class="content-section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll">Cost Comparison Analysis</h2>
+                
+                <div class="table-container animate-on-scroll">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Cloud Provider</th>
+                                <th>Compute Cost</th>
+                                <th>Storage Cost</th>
+                                <th>Monitoring</th>
+                                <th>Total (USD)</th>
+                                <th>Total (INR)</th>
+                                <th>Configuration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="provider-name">🟠 AWS EC2</td>
+                                <td>$120.50</td>
+                                <td>$12.00</td>
+                                <td>$9.15</td>
+                                <td class="cost-highlight">$141.65</td>
+                                <td>₹11,765</td>
+                                <td>t3.xlarge + gp3 150GB + CloudWatch</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🔵 Azure D4as v5</td>
+                                <td>$127.97</td>
+                                <td>$12.05</td>
+                                <td>$0.00</td>
+                                <td class="cost-highlight">$140.01</td>
+                                <td>₹11,620</td>
+                                <td>Premium SSD v2, East US, Linux VM</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🟡 GCP e2-standard-4</td>
+                                <td>$143.90</td>
+                                <td>$2.90</td>
+                                <td>$27.00</td>
+                                <td class="cost-high">$173.80</td>
+                                <td>₹14,420</td>
+                                <td>Cloud Logging & Operations</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🟠 Oracle Cloud ARM</td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                                <td class="cost-free">FREE</td>
+                                <td>₹0</td>
+                                <td>Always Free: 4 OCPU, 24GB RAM</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🟠 Oracle E4 Flex</td>
+                                <td>$95.10</td>
+                                <td>$6.57</td>
+                                <td>Included</td>
+                                <td class="cost-highlight">$101.67</td>
+                                <td>₹8,434</td>
+                                <td>VM.Standard.E4.Flex, 4 OCPU</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🟢 Hetzner CX42</td>
+                                <td>$38.00</td>
+                                <td>Included</td>
+                                <td>$5.00</td>
+                                <td class="cost-highlight">$43.00</td>
+                                <td>₹3,570</td>
+                                <td>8 vCPU, 32GB RAM, 240GB NVMe</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🔴 Contabo VPS XL</td>
+                                <td>$33.00</td>
+                                <td>Included</td>
+                                <td>$5.00</td>
+                                <td class="cost-highlight">$38.00</td>
+                                <td>₹3,160</td>
+                                <td>8 vCPU, 30GB RAM, 400GB SSD</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🔵 Linode</td>
+                                <td>$70.00</td>
+                                <td>$7.00</td>
+                                <td>$3.00</td>
+                                <td class="cost-highlight">$80.00</td>
+                                <td>₹6,680</td>
+                                <td>4 vCPU, 16GB RAM, 160GB SSD</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🔵 DigitalOcean</td>
+                                <td>$85.00</td>
+                                <td>Included</td>
+                                <td>$11.00</td>
+                                <td class="cost-highlight">$96.00</td>
+                                <td>₹8,010</td>
+                                <td>4 vCPU, 16GB RAM, 150GB SSD</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🟣 Vultr</td>
+                                <td>$85.00</td>
+                                <td>Included</td>
+                                <td>$11.00</td>
+                                <td class="cost-highlight">$96.00</td>
+                                <td>₹8,010</td>
+                                <td>4 vCPU, 16GB RAM, 150GB SSD</td>
+                            </tr>
+                            <tr>
+                                <td class="provider-name">🟤 UpCloud</td>
+                                <td>$95.00</td>
+                                <td>$10.00</td>
+                                <td>$5.00</td>
+                                <td class="cost-highlight">$110.00</td>
+                                <td>₹9,180</td>
+                                <td>4 vCPU, 16GB RAM, 150GB SSD</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommendations Section -->
+        <section id="recommendations" class="content-section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll">🌟 Best Provider Recommendations</h2>
+                
+                <div class="recommendations">
+                    <div class="recommendation-card animate-on-scroll">
+                        <div class="card-icon">🏢</div>
+                        <h3 class="card-title">Enterprise & Production</h3>
+                        <p class="card-description">For mission-critical applications requiring enterprise-grade support and compliance.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ AWS EC2 / Azure</h4>
+                                <ul>
+                                    <li>24/7 premium support</li>
+                                    <li>Global infrastructure</li>
+                                    <li>HIPAA, PCI DSS ready</li>
+                                    <li>Rich monitoring tools</li>
+                                </ul>
+                            </div>
+                            <div class="cons">
+                                <h4>⚠️ Considerations</h4>
+                                <ul>
+                                    <li>Higher costs</li>
+                                    <li>Complex pricing</li>
+                                    <li>Learning curve</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card animate-on-scroll">
+                        <div class="card-icon">💰</div>
+                        <h3 class="card-title">Cost-Effective Solutions</h3>
+                        <p class="card-description">Perfect balance of performance and cost for growing businesses.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ Oracle Cloud / Hetzner</h4>
+                                <ul>
+                                    <li>Excellent value</li>
+                                    <li>Competitive performance</li>
+                                    <li>Growing ecosystems</li>
+                                    <li>Simple pricing</li>
+                                </ul>
+                            </div>
+                            <div class="cons">
+                                <h4>⚠️ Considerations</h4>
+                                <ul>
+                                    <li>Limited support options</li>
+                                    <li>Smaller ecosystems</li>
+                                    <li>Regional limitations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card animate-on-scroll">
+                        <div class="card-icon">🚀</div>
+                        <h3 class="card-title">Startups & Developers</h3>
+                        <p class="card-description">Developer-friendly platforms with simple pricing and good documentation.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ DigitalOcean / Linode</h4>
+                                <ul>
+                                    <li>Developer-friendly</li>
+                                    <li>Simple interfaces</li>
+                                    <li>Great documentation</li>
+                                    <li>Community support</li>
+                                </ul>
+                            </div>
+                            <div class="cons">
+                                <h4>⚠️ Considerations</h4>
+                                <ul>
+                                    <li>Limited enterprise features</li>
+                                    <li>Ticket-based support</li>
+                                    <li>Basic monitoring</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card animate-on-scroll">
+                        <div class="card-icon">🆓</div>
+                        <h3 class="card-title">Free Tier & Testing</h3>
+                        <p class="card-description">Excellent for development, testing, and small projects with no budget constraints.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ Oracle Always Free</h4>
+                                <ul>
+                                    <li>Completely free</li>
+                                    <li>ARM performance</li>
+                                    <li>24GB RAM included</li>
+                                    <li>Perfect for testing</li>
+                                </ul>
+                            </div>
+                            <div class="cons">
+                                <h4>⚠️ Considerations</h4>
+                                <ul>
+                                    <li>Limited support</li>
+                                    <li>Free tier restrictions</li>
+                                    <li>Basic monitoring</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card animate-on-scroll">
+                        <div class="card-icon">🟠</div>
+                        <h3 class="card-title">Oracle Cloud Analysis</h3>
+                        <p class="card-description">Comprehensive analysis of Oracle Cloud's strengths and limitations for different use cases.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ Oracle Cloud Advantages</h4>
+                                <ul>
+                                    <li>Competitive pricing</li>
+                                    <li>Good for Oracle workloads</li>
+                                    <li>Growing cloud infrastructure</li>
+                                    <li>Included monitoring</li>
+                                    <li>Always Free tier (4 OCPU = 8 vCPU, 24GB RAM)</li>
+                                    <li>200GB free block storage</li>
+                                </ul>
+                            </div>
+                            <div class="cons">
+                                <h4>⚠️ Oracle Cloud Limitations</h4>
+                                <ul>
+                                    <li>Smaller market share vs AWS/Azure</li>
+                                    <li>Ecosystem still maturing</li>
+                                    <li>Limited compliance certifications</li>
+                                    <li>Smaller community support</li>
+                                    <li>Limited global infrastructure</li>
+                                    <li>Free tier doesn't include premium support</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 10px; border-left: 4px solid #667eea;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">💡 Best Use Cases:</h4>
+                            <p style="color: #555; margin: 0; line-height: 1.6;">
+                                <strong>Free Tier:</strong> Perfect for testing, development, learning, and small projects.<br>
+                                <strong>Paid Tier:</strong> Oracle-centric enterprise apps and cost-sensitive workloads.<br>
+                                <strong>Not Ideal:</strong> Mission-critical production requiring extensive compliance or 24/7 premium support.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="summary-section">
+            <div class="container">
+                <div class="summary-content">
+                    <h2 class="summary-title">Key Recommendations</h2>
+                    <p class="summary-text">
+                        For enterprise applications handling sensitive data like healthcare or financial information, 
+                        prioritize <strong>AWS EC2</strong> or <strong>Azure</strong> for their superior compliance, security, and 24/7 support. 
+                        For cost-conscious projects with good performance requirements, <strong>Oracle Cloud</strong> and <strong>Hetzner</strong> 
+                        offer excellent value. Startups and developers will find <strong>DigitalOcean</strong> and <strong>Linode</strong> 
+                        most accessible, while <strong>Oracle's Always Free tier</strong> is unbeatable for testing and development.
+                    </p>
+                    <a href="#comparison" class="cta-button">View Detailed Comparison</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 CloudCompare. Professional cloud infrastructure analysis for informed decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with animate-on-scroll class
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add hover effects to table rows
+        const tableRows = document.querySelectorAll('.comparison-table tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.zIndex = '5';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Add click animation to CTA buttons
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255,255,255,0.3)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.pointerEvents = 'none';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const rate = scrolled * -0.5;
+            
+            if (hero) {
+                hero.style.transform = `translateY(${rate}px)`;
+            }
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

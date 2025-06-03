@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Architecture Diagrams</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .architecture-section {
+            padding: 40px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+        
+        .architecture-section:last-child {
+            border-bottom: none;
+        }
+        
+        .arch-title {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            margin: -20px -20px 30px -20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        
+        .diagram-container {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .aws-cloud {
+            border: 3px dashed #FF9500;
+            border-radius: 20px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fff5f5 0%, #f0f8ff 100%);
+            position: relative;
+            min-height: 600px;
+        }
+        
+        .cloud-label {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #FF9500;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .vpc-container {
+            border: 2px solid #4CAF50;
+            border-radius: 15px;
+            padding: 25px;
+            background: rgba(76, 175, 80, 0.05);
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .vpc-label {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .subnet {
+            border: 2px solid;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px;
+            position: relative;
+            min-height: 300px;
+            display: inline-block;
+            vertical-align: top;
+            width: calc(45% - 30px);
+        }
+        
+        .public-subnet {
+            border-color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+        
+        .private-subnet {
+            border-color: #9C27B0;
+            background: rgba(156, 39, 176, 0.1);
+        }
+        
+        .subnet-label {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .public-subnet .subnet-label {
+            background: #2196F3;
+        }
+        
+        .private-subnet .subnet-label {
+            background: #9C27B0;
+        }
+        
+        .component {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            text-align: center;
+        }
+        
+        .ec2 {
+            border-color: #FF6B35;
+            background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+        }
+        
+        .alb {
+            border-color: #4ECDC4;
+            background: linear-gradient(135deg, #f5ffff, #e5fffe);
+        }
+        
+        .nat {
+            border-color: #45B7D1;
+            background: linear-gradient(135deg, #f5f9ff, #e5f3ff);
+        }
+        
+        .rds {
+            border-color: #96CEB4;
+            background: linear-gradient(135deg, #f5fff8, #e5ffe8);
+        }
+        
+        .monitoring {
+            border-color: #FECA57;
+            background: linear-gradient(135deg, #fffef5, #fffae5);
+        }
+        
+        .component-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .component-details {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .arrow {
+            position: absolute;
+            font-size: 2em;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .arrow-down {
+            color: #FF6B35;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .arrow-right {
+            color: #4ECDC4;
+            top: 50%;
+            right: -20px;
+            transform: translateY(-50%);
+        }
+        
+        .arrow-left {
+            color: #96CEB4;
+            top: 50%;
+            left: -20px;
+            transform: translateY(-50%);
+        }
+        
+        .internet {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+            text-align: center;
+            margin: 0 auto 20px auto;
+            width: 200px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .cost-table {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .cost-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .cost-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .cost-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .cost-table tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .total-cost {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .iam-section {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .iam-user {
+            flex: 1;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .admin-user {
+            border-color: #FF6B35;
+            background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+        }
+        
+        .dev-user {
+            border-color: #4ECDC4;
+            background: linear-gradient(135deg, #f5ffff, #e5fffe);
+        }
+        
+        .single-ec2-container {
+            background: rgba(33, 150, 243, 0.1);
+            border: 2px solid #2196F3;
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            margin: 20px;
+        }
+        
+        .flow-arrows {
+            position: absolute;
+            font-size: 1.5em;
+            color: #FF6B35;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .subnet {
+                width: calc(100% - 30px);
+                display: block;
+            }
+            
+            .iam-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ AWS Architecture Diagrams</h1>
+            <p>Complete Infrastructure Design with Traffic Flow & Cost Analysis</p>
+        </div>
+        
+        <!-- ARCHITECTURE 1: Single EC2 + Nginx -->
+        <div class="architecture-section">
+            <div class="arch-title">
+                🖥️ Architecture 1: Single EC2 + Nginx Reverse Proxy
+            </div>
+            
+            <div class="diagram-container">
+                <div class="internet">
+                    🌐 Internet Users
+                </div>
+                <div class="flow-arrows" style="top: 80px; left: 50%; transform: translateX(-50%);">
+                    ⬇️
+                </div>
+                
+                <div class="aws-cloud">
+                    <div class="cloud-label">AWS Cloud</div>
+                    
+                    <div class="single-ec2-container">
+                        <div class="vpc-label">Public Subnet (Default VPC)</div>
+                        
+                        <div class="component ec2">
+                            <div class="component-title">🖥️ EC2 Instance (t3.xlarge)</div>
+                            <div class="component-details">
+                                <strong>Specs:</strong> 4 vCPU, 16GB RAM<br>
+                                <strong>Storage:</strong> 250GB EBS gp3<br>
+                                <strong>Public IP:</strong> 54.x.x.x<br>
+                                <strong>Private IP:</strong> 172.31.x.x<br>
+                                <strong>Ports:</strong> 80, 443, 22
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrows" style="top: 120px; left: 50%; transform: translateX(-50%);">
+                            ⬇️
+                        </div>
+                        
+                        <div style="display: flex; gap: 20px; margin-top: 20px;">
+                            <div class="component alb" style="flex: 1;">
+                                <div class="component-title">🔄 Nginx Reverse Proxy</div>
+                                <div class="component-details">
+                                    <strong>Ports:</strong> 80 → 3000<br>
+                                    <strong>SSL:</strong> 443 → 3000<br>
+                                    <strong>Config:</strong> Load balancing
+                                </div>
+                            </div>
+                            
+                            <div class="flow-arrows" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                ➡️
+                            </div>
+                            
+                            <div class="component ec2" style="flex: 1;">
+                                <div class="component-title">🚀 Your Application</div>
+                                <div class="component-details">
+                                    <strong>Port:</strong> 3000/8000<br>
+                                    <strong>Framework:</strong> Node.js/Python<br>
+                                    <strong>Access:</strong> localhost only
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="component rds" style="margin-top: 20px;">
+                            <div class="component-title">💾 EBS Storage (250GB)</div>
+                            <div class="component-details">
+                                <strong>Type:</strong> gp3 ($0.08/GB-month)<br>
+                                <strong>Backup:</strong> 1 Daily snapshot<br>
+                                <strong>Snapshot Size:</strong> 250GB
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component monitoring" style="margin: 20px;">
+                        <div class="component-title">📊 CloudWatch Monitoring</div>
+                        <div class="component-details">
+                            <strong>Metrics:</strong> CPU, Memory, Disk<br>
+                            <strong>Logs:</strong> Application & System<br>
+                            <strong>Alerts:</strong> SNS notifications
+                        </div>
+                    </div>
+                    
+                    <div class="iam-section" style="margin: 20px;">
+                        <div class="iam-user admin-user">
+                            <div class="component-title">👨‍💼 Admin User</div>
+                            <div class="component-details">
+                                • Full EC2 access<br>
+                                • CloudWatch management<br>
+                                • EBS snapshot control<br>
+                                • Security group config
+                            </div>
+                        </div>
+                        <div class="iam-user dev-user">
+                            <div class="component-title">👨‍💻 Developer User</div>
+                            <div class="component-details">
+                                • Read-only monitoring<br>
+                                • Deploy applications<br>
+                                • View logs only<br>
+                                • No infrastructure changes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        <!-- ARCHITECTURE 2: VPC + ALB + Private Subnets -->
+        <div class="architecture-section">
+            <div class="arch-title">
+                🏗️ Architecture 2: VPC + ALB + Private Subnets (Highly Secure)
+            </div>
+            
+            <div class="diagram-container">
+                <div class="internet">
+                    🌐 Internet Users
+                </div>
+                <div class="flow-arrows" style="top: 80px; left: 50%; transform: translateX(-50%);">
+                    ⬇️
+                </div>
+                
+                <div class="aws-cloud">
+                    <div class="cloud-label">AWS Cloud</div>
+                    
+                    <div class="vpc-container">
+                        <div class="vpc-label">Custom VPC (10.0.0.0/16)</div>
+                        
+                        <div style="display: flex; gap: 20px;">
+                            <!-- Public Subnet -->
+                            <div class="subnet public-subnet">
+                                <div class="subnet-label">Public Subnet (10.0.1.0/24)</div>
+                                
+                                <div class="component alb">
+                                    <div class="component-title">⚖️ Application Load Balancer</div>
+                                    <div class="component-details">
+                                        <strong>DNS:</strong> app-123.elb.aws.com<br>
+                                        <strong>Ports:</strong> 80, 443<br>
+                                        <strong>SSL:</strong> Auto-termination
+                                    </div>
+                                </div>
+                                
+                                <div class="component nat">
+                                    <div class="component-title">🌐 NAT Gateway</div>
+                                    <div class="component-details">
+                                        <strong>Purpose:</strong> Outbound internet<br>
+                                        <strong>For:</strong> Private subnet EC2<br>
+                                        <strong>Security:</strong> No inbound access
+                                    </div>
+                                </div>
+                                
+                                <div class="component ec2" style="font-size: 0.9em;">
+                                    <div class="component-title">🔐 Bastion Host (Optional)</div>
+                                    <div class="component-details">
+                                        <strong>Instance:</strong> t3.micro<br>
+                                        <strong>SSH:</strong> Your IP only<br>
+                                        <strong>Jump box:</strong> Access private EC2
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flow-arrows" style="top: 50px; left: 50%; transform: translateX(-50%);">
+                                ➡️
+                            </div>
+                            
+                            <!-- Private Subnet -->
+                            <div class="subnet private-subnet">
+                                <div class="subnet-label">Private Subnet (10.0.2.0/24)</div>
+                                
+                                <div class="component ec2">
+                                    <div class="component-title">🖥️ EC2 Instances (x2)</div>
+                                    <div class="component-details">
+                                        <strong>Type:</strong> t3.xlarge (4 vCPU, 16GB RAM)<br>
+                                        <strong>Storage:</strong> 250GB EBS gp3 each<br>
+                                        <strong>IPs:</strong> 10.0.2.10, 10.0.2.11<br>
+                                        <strong>App Port:</strong> 3000/8000<br>
+                                        <strong>Access:</strong> ALB only
+                                    </div>
+                                </div>
+                                
+                                <div class="component rds" style="margin-top: 20px;">
+                                    <div class="component-title">💾 EBS Storage (2x 250GB)</div>
+                                    <div class="component-details">
+                                        <strong>Type:</strong> gp3 ($0.08/GB-month)<br>
+                                        <strong>Backup:</strong> 1 Daily snapshot each<br>
+                                        <strong>Snapshot Size:</strong> 500GB total
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="component monitoring" style="margin-top: 20px;">
+                            <div class="component-title">📊 Internet Gateway</div>
+                            <div class="component-details">
+                                <strong>Purpose:</strong> VPC internet access<br>
+                                <strong>Attached to:</strong> Public subnet only<br>
+                                <strong>Security:</strong> Route table controlled
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component monitoring" style="margin: 20px;">
+                        <div class="component-title">📊 CloudWatch + CloudTrail</div>
+                        <div class="component-details">
+                            <strong>Monitoring:</strong> All AWS resources<br>
+                            <strong>Logging:</strong> Application + API calls<br>
+                            <strong>Alerting:</strong> SNS notifications<br>
+                            <strong>Dashboards:</strong> Real-time metrics
+                        </div>
+                    </div>
+                    
+                    <div class="iam-section" style="margin: 20px;">
+                        <div class="iam-user admin-user">
+                            <div class="component-title">👨‍💼 Admin User</div>
+                            <div class="component-details">
+                                • Full VPC management<br>
+                                • EC2 control<br>
+                                • ALB configuration<br>
+                                • Security group setup<br>
+                                • CloudWatch access
+                            </div>
+                        </div>
+                        <div class="iam-user dev-user">
+                            <div class="component-title">👨‍💻 Developer User</div>
+                            <div class="component-details">
+                                • Read-only monitoring<br>
+                                • Deploy to EC2 only<br>
+                                • View CloudWatch logs<br>
+                                • No infrastructure changes<br>
+                                • Application debugging
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        <!-- TRAFFIC FLOW SUMMARY -->
+        <div class="architecture-section">
+            <div class="arch-title">
+                🔄 Traffic Flow Summary
+            </div>
+            
+            <div style="display: flex; gap: 30px;">
+                <div style="flex: 1;">
+                    <h3>🖥️ Architecture 1 - Traffic Flow</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                        <p><strong>Incoming:</strong></p>
+                        <p>🌐 User → 🖥️ EC2 Public IP → 🔄 Nginx (Port 80/443) → 🚀 App (Port 3000)</p>
+                        
+                        <p><strong>Outgoing:</strong></p>
+                        <p>🚀 App → 🔄 Nginx → 🖥️ EC2 Public IP → 🌐 User</p>
+                        
+                        <p><strong>Updates/APIs:</strong></p>
+                        <p>🖥️ EC2 → 🌐 Internet (Direct)</p>
+                    </div>
+                </div>
+                
+                <div style="flex: 1;">
+                    <h3>🏗️ Architecture 2 - Traffic Flow</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                        <p><strong>Incoming:</strong></p>
+                        <p>🌐 User → ⚖️ ALB (Public) → 🖥️ EC2 (Private)</p>
+                        
+                        <p><strong>Outgoing:</strong></p>
+                        <p>🖥️ EC2 (Private) → ⚖️ ALB (Public) → 🌐 User</p>
+                        
+                        <p><strong>Updates/APIs:</strong></p>
+                        <p>🖥️ EC2 (Private) → 🌐 NAT Gateway → 🌐 Internet</p>
+                        
+                        <p><strong>SSH Access:</strong></p>
+                        <p>👨‍💻 Admin → 🔐 Bastion → 🖥️ EC2 (Private)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
